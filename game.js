@@ -31,21 +31,19 @@ function create () {
     // this.add.image(450, 300, 'background').setScale(1.3, 1.08)
     this.add.image(450, 300, 'table').setScale(1.5);
 
-    let testCard = new Card(this, 'Queen', 'h');
-    // testCard.setInteractive();
-    // testCard.input.on('pointerdown', testCard.flip());
-    testCard.flip();
+    // let testCard = new Card(this, 'Queen', 'h');
+    // testCard.flip();
+    // testCard.sprite.setPosition(100, 200);
+
+    let testDeck = new Deck(this);
+    let testPlayer = new Player(this);
+    testPlayer.hit(testDeck.dealCard());
+    testPlayer.hit(testDeck.dealCard());
+    testPlayer.hit(testDeck.dealCard());
+    testPlayer.hit(testDeck.dealCard());
+    testPlayer.hit(testDeck.dealCard());
     
     
-    // cards = this.add.group({
-    //     key: 'cards',
-    //     repeat: 51,
-    //     setXY: {x: 750, y: 300, stepX: -0.25, stepY: -0.25}
-    // });
-    
-    // cards.children.iterate(function (child) {
-    //     child.setScale(1.5);
-    // })
 }
 
 class Card {
@@ -141,5 +139,112 @@ class Card {
         
         
         
+    }
+
+}
+
+class Deck {
+    constructor(scene) {
+        this.scene = scene;
+        this.cards = [];
+        const suits = ['Hearts', 'Diamonds', 'Clubs', 'Spades'];
+        const ranks = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'Jack', 'Queen', 'King', 'Ace'];
+
+        for (let suit of suits) {
+            for (let rank of ranks) {
+                this.cards.push(new Card(this.scene, rank, suit));
+            }
+        }
+
+        this.shuffle();
+        this.angle();
+    }
+
+    shuffle() {
+        for (let i = 0; i < 52; i++) {
+            const j = Math.floor(Math.random() * 52);
+            const card1 = Deck[i];
+            const card2 = Deck[j];
+            Deck[i] = card2;
+            Deck[j] = card1;
+        }
+    }
+
+    angle() {
+        let x = 750;
+        let y = 300;
+        for (let card of this.cards) {
+            card.sprite.setPosition(x, y);
+            x -= 0.25;
+            y -= 0.25;
+        }
+    }
+
+    dealCard() {
+        return this.cards.pop();
+    }
+}
+
+class Player {
+    constructor(scene) {
+        this.scene = scene;
+        this.hand = [];
+        this.sprites = [];
+    }
+
+    hit(card) {
+        this.hand.push(card);
+        this.sprites.push(card.sprite);
+        this.scene.tweens.add({
+            targets: card.sprite,
+            x: 500,
+            y: 400,
+            duration: 500,
+            ease: 'Power2',
+            onComplete: () => {
+                Phaser.Actions.GridAlign(this.sprites, {
+                    width: this.sprites.length,
+                    height: 1,
+                    cellWidth: 32,
+                    cellHeight: 47,
+                    x: 500,
+                    y: 400
+                });
+            }
+        })
+    }
+
+    getMaxScore() {
+        let score = this.hand.reduce((acc, card) => acc + card.getValue(), 0);
+        let aces = 0;
+        for (let card of this.hand) {
+            if (card.rank === 'Ace') {
+                aces++;
+            }
+        }
+        if (aces > 0) {
+            aces--;
+        }
+        return score - aces * 10;
+    }
+
+    getMinScore() {
+        if (this.hand.some(card => card.rank === 'Ace')) {
+            return this.getMaxScore() - 10;
+        } else {
+            return this.getMaxScore();
+        }
+    }
+
+    getScore() {
+        if (this.hand.some(card => card.rank === 'Ace')) {
+            if (this.getMaxScore() > 21) {
+                return `${this.getMinScore()}`;
+            } else {
+                return `${this.getMinScore()} or ${this.getMaxScore()}`;
+            }
+        } else {
+            return `${this.getMaxScore()}`;
+        }
     }
 }
