@@ -13,11 +13,13 @@ let config ={
     scene: {
         preload: preload,
         create: create,
-        // update: update
+        update: update
     }
 };
 
 var game = new Phaser.Game(config);
+let testDeck;
+let testPlayer;
 
 function preload () {
     // this.load.image('background', 'assets/7.png');
@@ -28,6 +30,8 @@ function preload () {
 }
 
 function create () {
+    this.cursors = this.input.keyboard.createCursorKeys();
+
     // this.add.image(450, 300, 'background').setScale(1.3, 1.08)
     this.add.image(450, 300, 'table').setScale(1.5);
 
@@ -35,15 +39,23 @@ function create () {
     // testCard.flip();
     // testCard.sprite.setPosition(100, 200);
 
-    let testDeck = new Deck(this);
-    let testPlayer = new Player(this);
-    testPlayer.hit(testDeck.dealCard());
-    testPlayer.hit(testDeck.dealCard());
-    testPlayer.hit(testDeck.dealCard());
-    testPlayer.hit(testDeck.dealCard());
-    testPlayer.hit(testDeck.dealCard());
+    testDeck = new Deck(this);
+    testPlayer = new Player(this, 425);
+    // testPlayer.hit(testDeck.dealCard());
+    // testPlayer.hit(testDeck.dealCard());
+    // testPlayer.hit(testDeck.dealCard());
+    // testPlayer.hit(testDeck.dealCard());
+    // testPlayer.hit(testDeck.dealCard());
     
     
+    
+}
+
+function update() {
+    if (this.cursors.up.isDown) {
+        testPlayer.hit(testDeck.dealCard());
+        // testPlayer.sprites[0].flip();
+    }
 }
 
 class Card {
@@ -186,19 +198,23 @@ class Deck {
 }
 
 class Player {
-    constructor(scene) {
+    constructor(scene, handy) {
         this.scene = scene;
+        this.handy = handy;
+        this.handx = 450;
+        this.putx = 450;
         this.hand = [];
         this.sprites = [];
     }
 
+    
     hit(card) {
         this.hand.push(card);
         this.sprites.push(card.sprite);
         this.scene.tweens.add({
             targets: card.sprite,
-            x: 500,
-            y: 400,
+            x: this.putx,
+            y: this.handy,
             duration: 500,
             ease: 'Power2',
             onComplete: () => {
@@ -207,11 +223,14 @@ class Player {
                     height: 1,
                     cellWidth: 32,
                     cellHeight: 47,
-                    x: 500,
-                    y: 400
+                    x: this.handx,
+                    y: this.handy
                 });
             }
         })
+        this.handx -= 16;
+        this.putx += 16;
+        card.flip();
     }
 
     getMaxScore() {
