@@ -20,41 +20,73 @@ let config ={
 var game = new Phaser.Game(config);
 let testDeck;
 let testPlayer;
+// let hitButton;
+// let standButton;
 
 function preload () {
     // this.load.image('background', 'assets/7.png');
     this.load.image('table', 'assets/Tablex2.png');
     this.load.spritesheet('cards', 'assets/cards-sheet.png',
         {frameWidth: 32, frameHeight: 47}
-    )
+    );
+    this.load.spritesheet('buttons1', 'assets/Buttons2.png',
+        {frameWidth: 16, frameHeight: 16}
+    );
+    this.load.spritesheet('buttons2', 'assets/Buttons1.png',
+        {frameWidth: 16, frameHeight: 16}
+    );
 }
 
 function create () {
+    this.keyHeld = false;
     this.cursors = this.input.keyboard.createCursorKeys();
 
-    // this.add.image(450, 300, 'background').setScale(1.3, 1.08)
+    
     this.add.image(450, 300, 'table').setScale(1.5);
 
-    // let testCard = new Card(this, 'Queen', 'h');
-    // testCard.flip();
-    // testCard.sprite.setPosition(100, 200);
+    // hitButton = this.add.sprite(400, 300, 'buttons1').setScale(2);
+    // hitButton.setInteractive();
+
+    // standButton = this.add.sprite(475, 300, 'buttons1').setFrame(1).setScale(2);
+    // standButton.setInteractive();
 
     testDeck = new Deck(this);
     testPlayer = new Player(this, 425);
-    // testPlayer.hit(testDeck.dealCard());
-    // testPlayer.hit(testDeck.dealCard());
-    // testPlayer.hit(testDeck.dealCard());
-    // testPlayer.hit(testDeck.dealCard());
-    // testPlayer.hit(testDeck.dealCard());
+    
+    testPlayer2 = new Player(this, 175);
     
     
     
 }
 
 function update() {
-    if (this.cursors.up.isDown) {
+    // hitButton.on('pointerdown', () => {
+    //     if (!this.keyHeld) {
+    //         hitButton.setTexture('buttons2');
+    //         this.keyHeld = true;
+    //         testPlayer.hit(testDeck.dealCard());
+    //         this.time.delayedCall(1000, () => {
+    //             this.keyHeld = false;
+    //             hitButton.setTexture('buttons1');
+    //             });
+    //     }
+    // });
+
+
+    if (this.cursors.down.isDown && this.keyHeld === false) {
+        this.keyHeld = true;
         testPlayer.hit(testDeck.dealCard());
-        // testPlayer.sprites[0].flip();
+        this.time.delayedCall(1000, () => {
+            this.keyHeld = false;
+        })
+    }
+
+    if (this.cursors.up.isDown && this.keyHeld === false) {
+        this.keyHeld = true;
+        testPlayer2.hit(testDeck.dealCard());
+        this.time.delayedCall(1000, () => {
+            this.keyHeld = false;
+        })
     }
 }
 
@@ -74,6 +106,9 @@ class Card {
             this.front = 12 + (2 * (this.getValue() - 2));
         } else if (this.getValue() >= 10) {
             switch (this.rank) {
+                case '10':
+                    this.front = 12 + (2 * (this.getValue() - 2));
+                    break;
                 case 'Jack':
                     this.front = 30;
                     break;
@@ -175,20 +210,23 @@ class Deck {
     shuffle() {
         for (let i = 0; i < 52; i++) {
             const j = Math.floor(Math.random() * 52);
-            const card1 = Deck[i];
-            const card2 = Deck[j];
-            Deck[i] = card2;
-            Deck[j] = card1;
+            const card1 = this.cards[i];
+            const card2 = this.cards[j];
+            this.cards[i] = card2;
+            this.cards[j] = card1;
         }
     }
 
     angle() {
         let x = 750;
         let y = 300;
+        let layer = 1;
         for (let card of this.cards) {
             card.sprite.setPosition(x, y);
+            card.sprite.setDepth(layer)
             x -= 0.25;
             y -= 0.25;
+            layer += 1;
         }
     }
 
@@ -218,6 +256,7 @@ class Player {
             duration: 500,
             ease: 'Power2',
             onComplete: () => {
+                card.sprite.setDepth(this.hand.length);
                 Phaser.Actions.GridAlign(this.sprites, {
                     width: this.sprites.length,
                     height: 1,
