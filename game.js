@@ -76,18 +76,41 @@ function update() {
     if (this.cursors.down.isDown && this.keyHeld === false) {
         this.keyHeld = true;
         testPlayer.hit(testDeck.dealCard());
+        testPlayer.hand[testPlayer.hand.length - 1].flip();
         this.time.delayedCall(1000, () => {
             this.keyHeld = false;
         })
     }
 
-    if (this.cursors.up.isDown && this.keyHeld === false) {
+    if (!this.cursors.shift.isDown && this.cursors.up.isDown && this.keyHeld === false) {
         this.keyHeld = true;
         testPlayer2.hit(testDeck.dealCard());
+        testPlayer2.hand[testPlayer2.hand.length - 1].flip();
         this.time.delayedCall(1000, () => {
             this.keyHeld = false;
         })
     }
+
+    if (this.cursors.shift.isDown && this.cursors.up.isDown && this.keyHeld === false) {
+        this.keyHeld = true;
+        testPlayer2.hit(testDeck.dealCard());
+        this.time.delayedCall(1000, () => {
+            this.keyHeld = false;
+        });
+    }
+
+    if (this.cursors.space.isDown && this.keyHeld === false) {
+        this.keyHeld = true;
+        for (card of testPlayer2.hand) {
+            if (!card.flipped) {
+                card.flip();
+            }
+        }
+        this.time.delayedCall(1000, () => {
+            this.keyHeld = false;
+        });
+    }
+    
 }
 
 class Card {
@@ -269,7 +292,7 @@ class Player {
         })
         this.handx -= 16;
         this.putx += 16;
-        card.flip();
+        // card.flip();
     }
 
     getMaxScore() {
