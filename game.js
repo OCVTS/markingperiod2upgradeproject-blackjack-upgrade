@@ -20,11 +20,11 @@ let config ={
 var game = new Phaser.Game(config);
 let testDeck;
 let testPlayer;
-// let hitButton;
-// let standButton;
+let hitButtonTop;
+let hitButtonBottom;
+let standButton;
 
 function preload () {
-    // this.load.image('background', 'assets/7.png');
     this.load.image('table', 'assets/Tablex2.png');
     this.load.spritesheet('cards', 'assets/cards-sheet.png',
         {frameWidth: 32, frameHeight: 47}
@@ -44,33 +44,88 @@ function create () {
     
     this.add.image(450, 300, 'table').setScale(1.5);
 
-    // hitButton = this.add.sprite(400, 300, 'buttons1').setScale(2);
-    // hitButton.setInteractive();
+    hitButtonTop = this.add.sprite(400, 300, 'buttons1').setScale(2);
+    hitButtonTop.setAngle(90);
+    hitButtonTop.setInteractive();
 
-    // standButton = this.add.sprite(475, 300, 'buttons1').setFrame(1).setScale(2);
-    // standButton.setInteractive();
+    hitButtonBottom = this.add.sprite(475, 300, 'buttons1').setScale(2);
+    hitButtonBottom.setAngle(270);
+    hitButtonBottom.setInteractive();
+
+    standButton = this.add.sprite(437.5, 300, 'buttons1').setFrame(1).setScale(2);
+    standButton.setInteractive();
 
     testDeck = new Deck(this);
     testPlayer = new Player(this, 425);
     
     testPlayer2 = new Player(this, 175);
     
-    
+    this.time.delayedCall(1000, () => {
+        testPlayer2.hit(testDeck.dealCard());
+    });
+    this.time.delayedCall(2000, () => {
+        testPlayer2.hit(testDeck.dealCard());
+    });
+    this.time.delayedCall(3000, () => {
+        testPlayer2.hand[1].flip();
+    });
+    this.time.delayedCall(4000, () => {
+        testPlayer.hit(testDeck.dealCard());
+    });
+    this.time.delayedCall(5000, () => {
+        testPlayer.hand[0].flip();
+    });
+    this.time.delayedCall(6000, () => {
+        testPlayer.hit(testDeck.dealCard());
+    });
+    this.time.delayedCall(7000, () => {
+        testPlayer.hand[1].flip();
+    });
     
 }
 
 function update() {
-    // hitButton.on('pointerdown', () => {
-    //     if (!this.keyHeld) {
-    //         hitButton.setTexture('buttons2');
-    //         this.keyHeld = true;
-    //         testPlayer.hit(testDeck.dealCard());
-    //         this.time.delayedCall(1000, () => {
-    //             this.keyHeld = false;
-    //             hitButton.setTexture('buttons1');
-    //             });
-    //     }
-    // });
+    hitButtonTop.on('pointerdown', () => {
+        if (!this.keyHeld) {
+            hitButtonTop.setTexture('buttons2');
+            this.keyHeld = true;
+            testPlayer.hit(testDeck.dealCard());
+            testPlayer.hand[testPlayer.hand.length - 1].flip();
+            this.time.delayedCall(1000, () => {
+                this.keyHeld = false;
+                hitButtonTop.setTexture('buttons1');
+            });
+        }
+    });
+
+    hitButtonBottom.on('pointerdown', () => {
+        if (!this.keyHeld) {
+            hitButtonBottom.setTexture('buttons2');
+            this.keyHeld = true;
+            testPlayer2.hit(testDeck.dealCard());
+            testPlayer2.hand[testPlayer2.hand.length - 1].flip();
+            this.time.delayedCall(1000, () => {
+                this.keyHeld = false;
+                hitButtonBottom.setTexture('buttons1');
+            });
+        }
+    });
+
+    standButton.on('pointerdown', () => {
+        if (!this.keyHeld) {
+            standButton.setTexture('buttons2').setFrame(1);
+            this.keyHeld = true;
+            for (card of testPlayer2.hand) {
+                if (!card.flipped) {
+                    card.flip();
+                }
+            }
+            this.time.delayedCall(1000, () => {
+                this.keyHeld = false;
+                standButton.setTexture('buttons1').setFrame(1);
+            });
+        }
+    });
 
 
     if (this.cursors.down.isDown && this.keyHeld === false) {
@@ -279,7 +334,6 @@ class Player {
             duration: 500,
             ease: 'Power2',
             onComplete: () => {
-                card.sprite.setDepth(this.hand.length);
                 Phaser.Actions.GridAlign(this.sprites, {
                     width: this.sprites.length,
                     height: 1,
@@ -290,6 +344,7 @@ class Player {
                 });
             }
         })
+        card.sprite.setDepth(this.hand.length);
         this.handx -= 16;
         this.putx += 16;
         // card.flip();
