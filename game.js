@@ -65,20 +65,14 @@ function create () {
     });
     this.time.delayedCall(2000, () => {
         testPlayer2.hit(testDeck.dealCard());
+        testPlayer2.hand[1].flip();
     });
     this.time.delayedCall(3000, () => {
-        testPlayer2.hand[1].flip();
+        testPlayer.hit(testDeck.dealCard());
+        testPlayer.hand[0].flip();
     });
     this.time.delayedCall(4000, () => {
         testPlayer.hit(testDeck.dealCard());
-    });
-    this.time.delayedCall(5000, () => {
-        testPlayer.hand[0].flip();
-    });
-    this.time.delayedCall(6000, () => {
-        testPlayer.hit(testDeck.dealCard());
-    });
-    this.time.delayedCall(7000, () => {
         testPlayer.hand[1].flip();
     });
     
