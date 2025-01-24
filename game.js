@@ -1,7 +1,11 @@
 let config ={
     type: Phaser.AUTO,
-    width: 900,
-    height: 600,
+    scale: {
+        mode: Phaser.Scale.FIT,
+        autoCenter: Phaser.Scale.CENTER_BOTH,
+        width: 1800,
+        height: 1200
+    },
     backgroundColor: '#17041f',
     physics: {
         default: 'arcade',
@@ -42,23 +46,23 @@ function create () {
     this.cursors = this.input.keyboard.createCursorKeys();
 
     
-    this.add.image(450, 300, 'table').setScale(1.5);
+    this.add.image(900, 600, 'table').setScale(3);
 
-    hitButtonTop = this.add.sprite(400, 300, 'buttons1').setScale(2);
+    hitButtonTop = this.add.sprite(800, 600, 'buttons1').setScale(4);
     hitButtonTop.setAngle(90);
     hitButtonTop.setInteractive();
 
-    hitButtonBottom = this.add.sprite(475, 300, 'buttons1').setScale(2);
+    hitButtonBottom = this.add.sprite(950, 600, 'buttons1').setScale(4);
     hitButtonBottom.setAngle(270);
     hitButtonBottom.setInteractive();
 
-    standButton = this.add.sprite(437.5, 300, 'buttons1').setFrame(1).setScale(2);
+    standButton = this.add.sprite(875, 600, 'buttons1').setFrame(1).setScale(4);
     standButton.setInteractive();
 
     testDeck = new Deck(this);
-    testPlayer = new Player(this, 425);
+    testPlayer = new Player(this, 850);
     
-    testPlayer2 = new Player(this, 175);
+    testPlayer2 = new Player(this, 350);
     
     this.time.delayedCall(1000, () => {
         testPlayer2.hit(testDeck.dealCard());
@@ -168,7 +172,7 @@ class Card {
         this.rank = rank;
         this.suit = suit;
         this.flipped = false;
-        this.sprite = this.scene.add.sprite(750, 300, 'cards').setScale(1.5);
+        this.sprite = this.scene.add.sprite(1500, 600, 'cards').setScale(3);
         this.front = 0;
         this.setFront();
     }
@@ -248,7 +252,7 @@ class Card {
                 this.scene.tweens.add({
                     targets: this.sprite,
                     props: {
-                        scaleX: { value: 1.5, duration: 500, yoyo: false },
+                        scaleX: { value: 3, duration: 500, yoyo: false },
                     },
                     ease: 'Linear'
                 });
@@ -290,8 +294,8 @@ class Deck {
     }
 
     angle() {
-        let x = 750;
-        let y = 300;
+        let x = 1500;
+        let y = 600;
         let layer = 1;
         for (let card of this.cards) {
             card.sprite.setPosition(x, y);
@@ -311,8 +315,8 @@ class Player {
     constructor(scene, handy) {
         this.scene = scene;
         this.handy = handy;
-        this.handx = 450;
-        this.putx = 450;
+        this.handx = 900;
+        this.putx = 900;
         this.hand = [];
         this.sprites = [];
     }
@@ -331,7 +335,7 @@ class Player {
                 Phaser.Actions.GridAlign(this.sprites, {
                     width: this.sprites.length,
                     height: 1,
-                    cellWidth: 32,
+                    cellWidth: 48,
                     cellHeight: 47,
                     x: this.handx,
                     y: this.handy
@@ -339,42 +343,42 @@ class Player {
             }
         })
         card.sprite.setDepth(this.hand.length);
-        this.handx -= 16;
-        this.putx += 16;
+        this.handx -= 24;
+        this.putx += 24;
         // card.flip();
     }
 
-    getMaxScore() {
-        let score = this.hand.reduce((acc, card) => acc + card.getValue(), 0);
-        let aces = 0;
-        for (let card of this.hand) {
-            if (card.rank === 'Ace') {
-                aces++;
-            }
-        }
-        if (aces > 0) {
-            aces--;
-        }
-        return score - aces * 10;
-    }
+    // getMaxScore() {
+    //     let score = this.hand.reduce((acc, card) => acc + card.getValue(), 0);
+    //     let aces = 0;
+    //     for (let card of this.hand) {
+    //         if (card.rank === 'Ace') {
+    //             aces++;
+    //         }
+    //     }
+    //     if (aces > 0) {
+    //         aces--;
+    //     }
+    //     return score - aces * 10;
+    // }
 
-    getMinScore() {
-        if (this.hand.some(card => card.rank === 'Ace')) {
-            return this.getMaxScore() - 10;
-        } else {
-            return this.getMaxScore();
-        }
-    }
+    // getMinScore() {
+    //     if (this.hand.some(card => card.rank === 'Ace')) {
+    //         return this.getMaxScore() - 10;
+    //     } else {
+    //         return this.getMaxScore();
+    //     }
+    // }
 
-    getScore() {
-        if (this.hand.some(card => card.rank === 'Ace')) {
-            if (this.getMaxScore() > 21) {
-                return `${this.getMinScore()}`;
-            } else {
-                return `${this.getMinScore()} or ${this.getMaxScore()}`;
-            }
-        } else {
-            return `${this.getMaxScore()}`;
-        }
-    }
+    // getScore() {
+    //     if (this.hand.some(card => card.rank === 'Ace')) {
+    //         if (this.getMaxScore() > 21) {
+    //             return `${this.getMinScore()}`;
+    //         } else {
+    //             return `${this.getMinScore()} or ${this.getMaxScore()}`;
+    //         }
+    //     } else {
+    //         return `${this.getMaxScore()}`;
+    //     }
+    // }
 }
