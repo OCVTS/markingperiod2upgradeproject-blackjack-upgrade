@@ -1,12 +1,15 @@
 let config ={
     type: Phaser.AUTO,
+
     scale: {
         mode: Phaser.Scale.FIT,
         autoCenter: Phaser.Scale.CENTER_BOTH,
         width: 1800,
         height: 1200
     },
+
     backgroundColor: '#17041f',
+
     physics: {
         default: 'arcade',
         arcade: {
@@ -14,20 +17,30 @@ let config ={
             debug: false
         }
     },
-    scene: {
-        preload: preload,
-        create: create,
-        update: update
-    }
+
+    scene: [
+    {key: 'start', preload: startLoad, create: startScene},
+    {key: 'game', preload: preload, create: create, update: update}
+    ]
 };
 
 var game = new Phaser.Game(config);
+game.scene.start('start');
 let testDeck;
 let testPlayer;
 let hitButtonTop;
 let hitButtonBottom;
 let standButton;
 
+function startLoad() {
+    this.load.image('menu', 'assets/TableExample.png');
+    this.load.spritesheet('buttons1', 'assets/Buttons2.png',
+        {frameWidth: 16, frameHeight: 16}
+    );
+    this.load.spritesheet('buttons2', 'assets/Buttons1.png',
+        {frameWidth: 16, frameHeight: 16}
+    );
+}
 function preload () {
     this.load.image('table', 'assets/Tablex2.png');
     this.load.spritesheet('cards', 'assets/cards-sheet.png',
@@ -41,6 +54,27 @@ function preload () {
     );
 }
 
+function startScene() {
+    this.add.image(900, 600, 'menu').setScale(4);
+    let startButton = this.add.sprite(900, 600, 'buttons1').setScale(4);
+    startButton.setInteractive();
+
+    startButton.on('pointerdown', () => {
+        startButton.setTexture('buttons2');
+        this.time.delayedCall(500, () => {
+            this.scene.start('game');
+        });
+
+    });
+
+    // startButton.on('pointerover', () => {
+    //     startButton.setTexture('buttons2');
+    // });
+
+    // startButton.on('pointerout', () => {
+    //     startButton.setTexture('buttons1');
+    // });
+}
 function create () {
     this.keyHeld = false;
     this.cursors = this.input.keyboard.createCursorKeys();
