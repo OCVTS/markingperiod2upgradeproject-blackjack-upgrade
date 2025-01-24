@@ -31,6 +31,7 @@ let testPlayer;
 let hitButtonTop;
 let hitButtonBottom;
 let standButton;
+let darkMode = false;
 
 function startLoad() {
     this.load.image('menu', 'assets/TableExample.png');
@@ -46,6 +47,9 @@ function preload () {
     this.load.spritesheet('cards', 'assets/cards-sheet.png',
         {frameWidth: 32, frameHeight: 47}
     );
+    this.load.spritesheet('cardsDark', 'assets/cardsDark-sheet.png',
+        {frameWidth: 32, frameHeight: 47}
+    );
     this.load.spritesheet('buttons1', 'assets/Buttons2.png',
         {frameWidth: 16, frameHeight: 16}
     );
@@ -56,8 +60,10 @@ function preload () {
 
 function startScene() {
     this.add.image(900, 600, 'menu').setScale(4);
-    let startButton = this.add.sprite(900, 600, 'buttons1').setScale(4);
+    let startButton = this.add.sprite(850, 600, 'buttons1').setScale(4);
+    let darkButton = this.add.sprite(950, 600, 'buttons1').setFrame(2).setScale(4);
     startButton.setInteractive();
+    darkButton.setInteractive();
 
     startButton.on('pointerdown', () => {
         startButton.setTexture('buttons2');
@@ -65,6 +71,16 @@ function startScene() {
             this.scene.start('game');
         });
 
+    });
+
+    darkButton.on('pointerdown', () => {
+        if (darkMode) {
+            darkMode = false;
+            darkButton.setTexture('buttons1').setFrame(2);
+        } else {
+            darkMode = true;
+            darkButton.setTexture('buttons2').setFrame(2);
+        }
     });
 
     // startButton.on('pointerover', () => {
@@ -209,6 +225,10 @@ class Card {
         this.sprite = this.scene.add.sprite(1500, 600, 'cards').setScale(3);
         this.front = 0;
         this.setFront();
+
+        if (darkMode) {
+            this.sprite.setTexture('cardsDark');
+        }
     }
 
     setFront() {
