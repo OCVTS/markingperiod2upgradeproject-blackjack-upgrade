@@ -8,7 +8,7 @@ let config ={
         height: 1200
     },
 
-    backgroundColor: '#17041f',
+    backgroundColor: '#c9bfff',
 
     physics: {
         default: 'arcade',
@@ -24,8 +24,11 @@ let config ={
     ]
 };
 
-var game = new Phaser.Game(config);
+
+const game = new Phaser.Game(config);
 game.scene.start('start');
+let altBack = '#17041f';
+let backColor = '#c9bfff';
 let testDeck;
 let testPlayer;
 let hitButtonTop;
@@ -71,16 +74,17 @@ function startScene() {
         this.time.delayedCall(500, () => {
             this.scene.start('game');
         });
-
     });
 
     darkButton.on('pointerdown', () => {
         if (darkMode) {
             darkMode = false;
             darkButton.setTexture('buttons1').setFrame(2);
+            this.cameras.main.setBackgroundColor(backColor);
         } else {
             darkMode = true;
             darkButton.setTexture('buttons2').setFrame(2);
+            this.cameras.main.setBackgroundColor(altBack);
         }
     });
 
@@ -89,6 +93,7 @@ function create () {
     this.keyHeld = false;
     this.cursors = this.input.keyboard.createCursorKeys();
 
+    this.cameras.main.setBackgroundColor(darkMode ? altBack : backColor);
     
     this.add.image(900, 600, 'table').setScale(3);
 
@@ -405,7 +410,6 @@ class Player {
         card.sprite.setDepth(this.hand.length);
         this.handx -= 24;
         this.putx += 24;
-        // card.flip();
     }
 
     // getMaxScore() {
