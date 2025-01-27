@@ -35,7 +35,8 @@ let hitButtonTop;
 let hitButtonBottom;
 let standButton;
 let darkMode = false;
-let reset;
+let resetH;
+let resetS;
 
 function startLoad() {
     this.load.image('menu', 'assets/TableExample.png');
@@ -97,8 +98,11 @@ function create () {
     
     this.add.image(900, 600, 'table').setScale(3);
 
-    reset = this.add.sprite(1500, 850, 'cards').setFrame(7).setScale(3);
-    reset.setInteractive();
+    resetH = this.add.sprite(1500, 850, 'cards').setFrame(7).setScale(3);
+    resetH.setInteractive();
+
+    resetS = this.add.sprite(1500, 350, 'cards').setFrame(7).setScale(3);
+    resetS.setInteractive();
 
     hitButtonTop = this.add.sprite(800, 600, 'buttons1').setScale(4);
     hitButtonTop.setAngle(90);
@@ -216,8 +220,13 @@ function update() {
         });
     }
 
-    reset.on('pointerdown', () => {
+    resetH.on('pointerdown', () => {
         this.scene.start('start');
+        
+    });
+
+    resetS.on('pointerdown', () => {
+        this.scene.restart();
         
     });
     
