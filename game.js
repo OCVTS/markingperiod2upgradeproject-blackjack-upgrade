@@ -212,7 +212,8 @@ function update() {
     }
 
     reset.on('pointerdown', () => {
-        this.scene.restart();
+        this.scene.start('start');
+        
     });
     
 }
