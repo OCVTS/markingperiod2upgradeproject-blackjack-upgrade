@@ -101,7 +101,7 @@ function create () {
     resetH = this.add.sprite(1500, 850, 'cards').setFrame(7).setScale(3);
     resetH.setInteractive();
 
-    resetS = this.add.sprite(1500, 350, 'cards').setFrame(7).setScale(3);
+    resetS = this.add.sprite(1500, 350, 'cards').setFrame(6).setScale(3);
     resetS.setInteractive();
 
     hitButtonTop = this.add.sprite(800, 600, 'buttons1').setScale(4);
