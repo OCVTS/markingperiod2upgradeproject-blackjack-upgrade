@@ -1,0 +1,54 @@
+body {
+    padding: 0px;
+    margin: 0px;
+}
+
+header {
+    background-color: #222034;
+    width: 100vw;
+    position: fixed;
+    text-align: center;
+    height: 13vh;
+    top: 0;
+    font-size: 1.7vh;
+    color: #c43f4a;
+}
+
+main {
+    margin-top: 13vh;
+    background-color: #37946e;
+    height: 87vh;
+    
+}
+
+#grid {
+    text-align: center;
+    display: grid;
+    grid-template-areas: 
+        "desc dev"
+        "proc proc";
+    grid-template-columns: 1fr 1fr;
+    gap: 0px;
+    font-size: 1.5vh;
+    border-collapse: collapse;
+}
+
+#description {
+    border: 1px solid black;
+    grid-area: desc;
+    padding: 10px;
+}
+
+#process {
+    border: 1px solid black;
+    grid-area: dev;
+    padding: 10px;
+}
+
+#link {
+    /* border: 1px solid blue; */
+    text-align: center;
+    margin: 0px;
+    grid-area: proc;
+    font-size: 3vh;
+}
